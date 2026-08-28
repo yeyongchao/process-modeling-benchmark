@@ -1,14 +1,14 @@
-# IPC-Bench: Industrial Process Control Benchmark
+# little m: An AI Agent for Industrial Process Optimization
 
-## Overview
+This is the official open-source repository accompanying the paper **“little m: An AI Agent for Industrial Process Optimization.”** It provides the IPC-Bench evaluation benchmark, a reference implementation of the little m workflow, and the domain knowledge base used for retrieval.
 
-IPC-Bench is a multimodal benchmark dataset for evaluating AI agents on industrial process optimization modeling. It contains **50 canonical optimization scenarios** sourced from seminal textbooks in process control and chemical engineering optimization.
+## IPC-Bench
 
-Unlike existing benchmarks that rely on purely textual inputs, IPC-Bench requires reasoning over **multimodal inputs** (natural language descriptions paired with process flow diagrams) to formulate physically grounded mathematical models.
+IPC-Bench is the multimodal benchmark introduced in the paper for evaluating industrial process optimization modeling. It contains **50 canonical, textbook-derived scenarios** from process control and chemical engineering optimization.
 
-This repository also includes the implementation of **"little m"**, an AI agent for verifiable synthesis of industrial process optimization models.
+Each case combines a natural-language process description with any available process diagram and asks the system to formulate a structured mathematical optimization model. The benchmark therefore evaluates both semantic interpretation and grounding in process structure, rather than text-only equation generation.
 
-## Dataset
+### Dataset Structure
 
 ```
 data/
@@ -17,7 +17,7 @@ data/
     └── {id}_{source-case}_{figure-index}.png
 ```
 
-### Problem Format
+### Case Format
 
 Each markdown file (`{id}.md`) contains a structured optimization problem with:
 
@@ -26,23 +26,22 @@ Each markdown file (`{id}.md`) contains a structured optimization problem with:
 - **Objective Function** — The optimization target (`min`/`max`) in LaTeX.
 - **Constraints** — Physical, operational, and safety constraints in LaTeX, including system dynamics, bounds, and conservation laws.
 
-## Agent and Knowledge Base
+## Implementation and Knowledge Base
 
-The repository includes two files supporting the **little m** implementation:
+The reference release consists of two files:
 
 | File | Description |
 |------|-------------|
-| `Agent_EN.yml` | The Dify implementation of the non-interactive modeling workflow. It structures the input, plans the task, retrieves relevant knowledge, determines an optimization strategy, and produces the mathematical model. |
-| `industrial_optimization_knowledgebase.md` | The English v3 knowledge base used by the retrieval stage. It contains 45 general industrial pathways and 10 brewing-specific pathways organized around symptoms, optimization objectives, candidate algorithms, required information, mathematical patterns, and applicability limits. |
+| `Agent_EN.yml` | The [Dify](https://github.com/langgenius/dify) implementation of the paper's non-interactive workflow: information structuring, task planning, retrieval enhancement, knowledge retrieval, strategy determination, and mathematical modeling. |
+| `industrial_optimization_knowledgebase.md` | The knowledge base used by the retrieval stage. It contains 45 general industrial pathways and 10 brewing-specific pathways organized around symptoms, optimization objectives, candidate algorithms, required information, mathematical patterns, and applicability limits. |
 
-To use the agent in Dify, upload `industrial_optimization_knowledgebase.md` as a knowledge base, import `Agent_EN.yml`, configure the required model providers, and bind the uploaded knowledge base to the retrieval node named `industrial_optimization_knowledgebase.md`. Knowledge-base IDs are specific to each Dify instance, so this binding must be configured after import.
+To reproduce the reference implementation in Dify, upload `industrial_optimization_knowledgebase.md` as a knowledge base, import `Agent_EN.yml`, configure the required model providers, and bind the uploaded knowledge base to the retrieval node with the same name. Knowledge-base IDs are specific to each Dify instance, so the binding must be configured after import.
 
 ## Citation
 
-
 ```bibtex
-@inproceedings{ye2026ipcbench,
-  title     = {{little m}: An AI Agent for Industrial Process Optimization},
+@inproceedings{ye2026little,
+  title     = {{little} m: An AI Agent for Industrial Process Optimization},
   author    = {Ye, Yongchao and He, Xinyu and Boshoff, Dutliff and Kuo, Way and Li, Lishuai},
   booktitle = {Findings of the 2026 Conference on Empirical Methods in Natural Language Processing, EMNLP 2026},
   year      = {2026},
