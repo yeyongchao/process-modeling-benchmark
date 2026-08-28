@@ -13,15 +13,8 @@ This repository also includes the implementation of **"little m"**, an AI agent 
 ```
 data/
 ├── 1.md – 50.md          # 50 problem descriptions with ground truth models
-└── figures/               # Process flow diagrams and schematics (42 images)
-    ├── 01_am_*.png        # Manufacturing problems
-    ├── 03_apec_*.png      # Advanced process engineering & control
-    ├── 07_ced_*.png       # Chemical engineering design
-    ├── 10_nonp_*.png      # Nonlinear programming
-    ├── 21_optcp_*.png     # Optimal control
-    ├── 26_pcpo_*.png      # Process control & optimization
-    ├── 39_pd_*.png        # Process design
-    └── 48_psa_*.png       # Process systems analysis
+└── figures/               # Process flow diagrams and schematics (41 images)
+    └── {id}_{source-case}_{figure-index}.png
 ```
 
 ### Problem Format
@@ -33,47 +26,26 @@ Each markdown file (`{id}.md`) contains a structured optimization problem with:
 - **Objective Function** — The optimization target (`min`/`max`) in LaTeX.
 - **Constraints** — Physical, operational, and safety constraints in LaTeX, including system dynamics, bounds, and conservation laws.
 
-## Agent Code
+## Agent and Knowledge Base
 
-The agent is implemented as a **Dify advanced-chat workflow** in `Agent_EN.yml` and can be imported directly into a Dify instance.
+The repository includes two files supporting the **little m** implementation:
 
-### Requirements
+| File | Description |
+|------|-------------|
+| `Agent_EN.yml` | The Dify implementation of the non-interactive modeling workflow. It structures the input, plans the task, retrieves relevant knowledge, determines an optimization strategy, and produces the mathematical model. |
+| `industrial_optimization_knowledgebase.md` | The English v3 knowledge base used by the retrieval stage. It contains 45 general industrial pathways and 10 brewing-specific pathways organized around symptoms, optimization objectives, candidate algorithms, required information, mathematical patterns, and applicability limits. |
 
-- **Dify** (v0.4.0+)
-- **Plugins** (installed via Dify marketplace):
-  - `langgenius/gemini` — Google Gemini models
-  - `langgenius/siliconflow` — SiliconFlow for BGE reranker
-  - `langgenius/openai` — OpenAI embeddings
+To use the agent in Dify, upload `industrial_optimization_knowledgebase.md` as a knowledge base, import `Agent_EN.yml`, configure the required model providers, and bind the uploaded knowledge base to the retrieval node named `industrial_optimization_knowledgebase.md`. Knowledge-base IDs are specific to each Dify instance, so this binding must be configured after import.
 
-### Required API Keys
+## Citation
 
-| Provider | Model(s) | Purpose |
-|----------|----------|---------|
-| Google | `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.5-flash-lite` | Reasoning, classification, fallback |
-| OpenAI | `text-embedding-3-large` | Knowledge base embeddings |
-| SiliconFlow | `BAAI/bge-reranker-v2-m3` | Retrieval reranking |
 
-### Deployment
-
-1. Import `Agent_EN.yml` into Dify as a new application.
-2. Configure API credentials for the required model providers.
-3. Create a knowledge base with domain-specific content (physical principles, control heuristics, optimization algorithms) and link it to the workflow's knowledge retrieval nodes.
-4. Publish the application.
-
-### Architecture
-
-```
-User Input
-  → [Security Gate] Gemini 2.5 Flash (attack detection)
-      → Attack blocked, or:
-  → [Question Classifier] Gemini 2.5 Flash
-      ├─ Optimization Exploration → RAG → Gemini 2.5 Pro
-      ├─ Scene Concept Optimization → RAG → Gemini 2.5 Pro
-      ├─ Specific Scene Optimization → RAG → Gemini 2.5 Pro
-      │     Stage 1: Information Structuring (entity extraction, gap analysis)
-      │     Stage 2: Strategy Design (variable classification, method selection)
-      │     Stage 3: Mathematical Modeling (formulation + consistency checks)
-      ├─ Method Consultation → RAG → Gemini 2.5 Pro
-      ├─ Unclear Requirement → Gemini 2.5 Flash (clarification)
-      └─ Out of Scope → Gemini 2.5 Flash Lite (fallback)
+```bibtex
+@inproceedings{ye2026ipcbench,
+  title     = {{little m}: An AI Agent for Industrial Process Optimization},
+  author    = {Ye, Yongchao and He, Xinyu and Boshoff, Dutliff and Kuo, Way and Li, Lishuai},
+  booktitle = {Findings of the 2026 Conference on Empirical Methods in Natural Language Processing, EMNLP 2026},
+  year      = {2026},
+  address   = {Budapest, Hungary},
+}
 ```
